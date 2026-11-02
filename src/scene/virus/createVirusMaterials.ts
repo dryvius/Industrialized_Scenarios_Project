@@ -1,9 +1,5 @@
-import * as THREE from 'three'
-import {
-  VIRUS_COLORS,
-  VIRUS_GOLD_LOOK,
-  VIRUS_MAIN_LOOK,
-} from '@/constants/virusMonitor'
+import * as THREE from "three";
+import { VIRUS_COLORS, VIRUS_GOLD_LOOK, VIRUS_MAIN_LOOK } from "@/constants/virusMonitor";
 
 /**
  * 主球 / 金体使用自定义着色器：
@@ -36,7 +32,7 @@ void main() {
   vRadial = aRadial;
   gl_Position = projectionMatrix * viewMatrix * worldPos;
 }
-`
+`;
 
 const VIRUS_NOISE = /* glsl */ `
 float virusHash(vec3 p) {
@@ -63,7 +59,7 @@ float virusNoise(vec3 p) {
     f.z
   );
 }
-`
+`;
 
 const VIRUS_FRAGMENT_MAIN = /* glsl */ `
 precision highp float;
@@ -103,15 +99,15 @@ void main() {
   // 斑驳 / 颗粒钉在物体空间，随模型旋转；光照仍用世界法线
   vec3 surfacePos = vLocalPos;
 
-  // 多尺度体表：低频斑驳、中频纤维、高频颗粒
+  // 多尺度体表：低频色块、中频纤维、高频显微颗粒
   float n1 = virusNoise(surfacePos * 3.4 + 1.7);
   float n2 = virusNoise(surfacePos * 10.5 + 5.2);
   float n3 = virusNoise(surfacePos * 34.0);
-  float n4 = virusNoise(surfacePos * 118.0);
+  float n4 = virusNoise(surfacePos * 46.0);
   float fiber = virusNoise(vec3(surfacePos.x * 40.0, surfacePos.y * 8.0, surfacePos.z * 40.0));
 
   // 三次前向差分给法线一点显微起伏；高光用原始法线，避免碎白点
-  vec3 bumpPos = surfacePos * 118.0;
+  vec3 bumpPos = surfacePos * 46.0;
   float bumpStep = 0.22;
   float bx = virusNoise(bumpPos + vec3(bumpStep, 0.0, 0.0)) - n4;
   float by = virusNoise(bumpPos + vec3(0.0, bumpStep, 0.0)) - n4;
@@ -123,7 +119,7 @@ void main() {
   vec3 base = mix(teal, maroon, smoothstep(0.26, 0.68, n1) * 1.45);
   base = mix(base, uMaroon * 1.15, smoothstep(0.56, 0.8, fiber) * 0.28);
   base *= 0.75 + 0.5 * n3;
-  base *= 0.85 + 0.3 * n4;
+  base *= 0.68 + 0.58 * n4;
 
   // 平滑主光 + 冷补光；细节留给颜色，避免法线噪点产生白色碎光
   vec3 L = normalize(vec3(0.56, 0.64, 0.52));
@@ -141,7 +137,7 @@ void main() {
   // 中性环境抬起暗部，避免阴影发纯红
   color += vec3(0.008, 0.012, 0.011);
   // 细颗粒只调制明度，避免产生白色碎点
-  color *= 0.9 + 0.2 * n4;
+  color *= 0.74 + 0.44 * n4;
 
   // 刺突：法线与径向夹角确认「管状」，再叠加半径门槛
   float tubeMask = 1.0 - smoothstep(0.34, 0.86, radialAlign);
@@ -169,7 +165,7 @@ void main() {
   color += uCyan * 0.012;
   gl_FragColor = vec4(color, 1.0);
 }
-`
+`;
 
 const VIRUS_FRAGMENT_GOLD = /* glsl */ `
 precision highp float;
@@ -227,57 +223,57 @@ void main() {
 
   gl_FragColor = vec4(color, 1.0);
 }
-`
+`;
 
 function linearColor(hex: number): THREE.Color {
-  return new THREE.Color(hex).convertSRGBToLinear()
+    return new THREE.Color(hex).convertSRGBToLinear();
 }
 
 export function createVirusMainMaterial(): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
-    vertexShader: VIRUS_VERTEX,
-    fragmentShader: VIRUS_FRAGMENT_MAIN,
-    uniforms: {
-      uDark: { value: linearColor(VIRUS_COLORS.core) },
-      uMid: { value: linearColor(VIRUS_COLORS.mid) },
-      uMaroon: { value: linearColor(VIRUS_COLORS.maroon) },
-      uCyan: { value: linearColor(VIRUS_COLORS.emissive) },
-      uRed: { value: linearColor(VIRUS_COLORS.alert) },
-      uSpike: { value: linearColor(VIRUS_COLORS.spike) },
-      uRimStrength: { value: VIRUS_MAIN_LOOK.rimStrength },
-      uRimPower: { value: VIRUS_MAIN_LOOK.rimPower },
-      uRedRimStrength: { value: VIRUS_MAIN_LOOK.redRimStrength },
-      uRedRimPower: { value: VIRUS_MAIN_LOOK.redRimPower },
-      uSpikeMix: { value: VIRUS_MAIN_LOOK.spikeMix },
-      uTipStrength: { value: VIRUS_MAIN_LOOK.tipStrength },
-      uGrain: { value: VIRUS_MAIN_LOOK.grain },
-      uAmbient: { value: VIRUS_MAIN_LOOK.ambient },
-      uKeyStrength: { value: VIRUS_MAIN_LOOK.keyStrength },
-      uFillStrength: { value: VIRUS_MAIN_LOOK.fillStrength },
-    },
-    side: THREE.FrontSide,
-    depthWrite: true,
-    depthTest: true,
-  })
+    return new THREE.ShaderMaterial({
+        vertexShader: VIRUS_VERTEX,
+        fragmentShader: VIRUS_FRAGMENT_MAIN,
+        uniforms: {
+            uDark: { value: linearColor(VIRUS_COLORS.core) },
+            uMid: { value: linearColor(VIRUS_COLORS.mid) },
+            uMaroon: { value: linearColor(VIRUS_COLORS.maroon) },
+            uCyan: { value: linearColor(VIRUS_COLORS.emissive) },
+            uRed: { value: linearColor(VIRUS_COLORS.alert) },
+            uSpike: { value: linearColor(VIRUS_COLORS.spike) },
+            uRimStrength: { value: VIRUS_MAIN_LOOK.rimStrength },
+            uRimPower: { value: VIRUS_MAIN_LOOK.rimPower },
+            uRedRimStrength: { value: VIRUS_MAIN_LOOK.redRimStrength },
+            uRedRimPower: { value: VIRUS_MAIN_LOOK.redRimPower },
+            uSpikeMix: { value: VIRUS_MAIN_LOOK.spikeMix },
+            uTipStrength: { value: VIRUS_MAIN_LOOK.tipStrength },
+            uGrain: { value: VIRUS_MAIN_LOOK.grain },
+            uAmbient: { value: VIRUS_MAIN_LOOK.ambient },
+            uKeyStrength: { value: VIRUS_MAIN_LOOK.keyStrength },
+            uFillStrength: { value: VIRUS_MAIN_LOOK.fillStrength },
+        },
+        side: THREE.FrontSide,
+        depthWrite: true,
+        depthTest: true,
+    });
 }
 
 export function createVirusGoldMaterial(): THREE.ShaderMaterial {
-  return new THREE.ShaderMaterial({
-    vertexShader: VIRUS_VERTEX,
-    fragmentShader: VIRUS_FRAGMENT_GOLD,
-    uniforms: {
-      uDark: { value: linearColor(VIRUS_COLORS.goldShadow) },
-      uBright: { value: linearColor(VIRUS_COLORS.gold) },
-      uHot: { value: linearColor(VIRUS_COLORS.goldHot) },
-      uRed: { value: linearColor(VIRUS_COLORS.alert) },
-      uRimStrength: { value: VIRUS_GOLD_LOOK.rimStrength },
-      uSpecStrength: { value: VIRUS_GOLD_LOOK.specStrength },
-      uAmbient: { value: VIRUS_GOLD_LOOK.ambient },
-      uKeyStrength: { value: VIRUS_GOLD_LOOK.keyStrength },
-      uSpikeStrength: { value: VIRUS_GOLD_LOOK.spikeStrength },
-    },
-    side: THREE.FrontSide,
-    depthWrite: true,
-    depthTest: true,
-  })
+    return new THREE.ShaderMaterial({
+        vertexShader: VIRUS_VERTEX,
+        fragmentShader: VIRUS_FRAGMENT_GOLD,
+        uniforms: {
+            uDark: { value: linearColor(VIRUS_COLORS.goldShadow) },
+            uBright: { value: linearColor(VIRUS_COLORS.gold) },
+            uHot: { value: linearColor(VIRUS_COLORS.goldHot) },
+            uRed: { value: linearColor(VIRUS_COLORS.alert) },
+            uRimStrength: { value: VIRUS_GOLD_LOOK.rimStrength },
+            uSpecStrength: { value: VIRUS_GOLD_LOOK.specStrength },
+            uAmbient: { value: VIRUS_GOLD_LOOK.ambient },
+            uKeyStrength: { value: VIRUS_GOLD_LOOK.keyStrength },
+            uSpikeStrength: { value: VIRUS_GOLD_LOOK.spikeStrength },
+        },
+        side: THREE.FrontSide,
+        depthWrite: true,
+        depthTest: true,
+    });
 }
