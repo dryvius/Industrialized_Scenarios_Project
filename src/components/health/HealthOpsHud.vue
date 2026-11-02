@@ -13,7 +13,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   selectWorker: [businessKey: string]
   exit: []
-  openDemo: []
 }>()
 
 type StatusFilter = 'all' | VitalsLevel
@@ -89,11 +88,6 @@ function pulseChip(event: MouseEvent): void {
   target.classList.add('is-pulse')
 }
 
-function handleOpenDemo(event: MouseEvent): void {
-  pulseChip(event)
-  emit('openDemo')
-}
-
 function handleExit(event: MouseEvent): void {
   pulseChip(event)
   emit('exit')
@@ -143,7 +137,6 @@ watch(
       <div class="ops__meta">
         <span class="ops__badge">{{ sourceLabel }}</span>
         <strong>{{ clockLabel }}</strong>
-        <button type="button" class="hud-chip" @click="handleOpenDemo">全息演示</button>
         <button type="button" class="hud-chip" @click="handleExit">退出大屏</button>
       </div>
     </header>

@@ -1004,7 +1004,6 @@ function fillSurfacePoint(
   const nx = input.normals[i * 3]
   const ny = input.normals[i * 3 + 1]
   const nz = input.normals[i * 3 + 2]
-  const rim = computeRimWeight(x, y, z)
   const silhouette = computeSilhouetteScore(x, y, z, nx, ny, nz)
   const seed = Math.random()
   input.seeds[i] = seed

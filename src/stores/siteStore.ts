@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { constructionDataApi } from '@/api/constructionData'
+import { virusMonitorApi } from '@/api/virusMonitor'
 import { vitalSignsApi } from '@/api/vitalSigns'
 import { SceneObjectType } from '@/enums/SceneObjectType'
 import type { BusinessEntity, SiteSummary } from '@/types/business'
 import type { SceneSelectionPayload } from '@/types/scene'
+import type { VirusMonitorSnapshot } from '@/types/virusMonitor'
 import type { SiteHealthOverview, VitalsLevel, WorkerHealthDetail } from '@/types/vitals'
 
 export const useSiteStore = defineStore('site', () => {
@@ -13,12 +15,15 @@ export const useSiteStore = defineStore('site', () => {
   const selectedEntity = ref<BusinessEntity | null>(null)
   const selectedVitals = ref<WorkerHealthDetail | null>(null)
   const healthOverview = ref<SiteHealthOverview | null>(null)
+  const virusMonitorSnapshot = ref<VirusMonitorSnapshot | null>(null)
   const loading = ref(false)
   const vitalsLoading = ref(false)
   const overviewLoading = ref(false)
+  const virusMonitorLoading = ref(false)
   const errorMessage = ref('')
   const vitalsError = ref('')
   const overviewError = ref('')
+  const virusMonitorError = ref('')
 
   async function loadSummary(): Promise<void> {
     loading.value = true
@@ -112,6 +117,25 @@ export const useSiteStore = defineStore('site', () => {
     }
   }
 
+  async function loadVirusMonitorDemo(): Promise<void> {
+    virusMonitorLoading.value = true
+    virusMonitorError.value = ''
+    try {
+      virusMonitorSnapshot.value = await virusMonitorApi.fetchDemoSnapshot()
+    } catch (error) {
+      console.error('[siteStore] loadVirusMonitorDemo failed', error)
+      virusMonitorSnapshot.value = null
+      virusMonitorError.value = '病毒监控演示数据加载失败，请稍后重试'
+    } finally {
+      virusMonitorLoading.value = false
+    }
+  }
+
+  function clearVirusMonitor(): void {
+    virusMonitorSnapshot.value = null
+    virusMonitorError.value = ''
+  }
+
   function workerLevelMap(): Map<string, VitalsLevel> {
     const map = new Map<string, VitalsLevel>()
     healthOverview.value?.workers.forEach((card) => {
@@ -133,17 +157,22 @@ export const useSiteStore = defineStore('site', () => {
     selectedEntity,
     selectedVitals,
     healthOverview,
+    virusMonitorSnapshot,
     loading,
     vitalsLoading,
     overviewLoading,
+    virusMonitorLoading,
     errorMessage,
     vitalsError,
     overviewError,
+    virusMonitorError,
     loadSummary,
     loadHealthOverview,
     selectObject,
     loadWorkerVitals,
     loadDemoVitals,
+    loadVirusMonitorDemo,
+    clearVirusMonitor,
     workerLevelMap,
     clearSelection,
   }

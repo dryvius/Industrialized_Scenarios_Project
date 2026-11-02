@@ -247,9 +247,9 @@ export function computeRimWeight(x: number, y: number, z: number): number {
 export function computeTorsoFrontWeight(
   x: number,
   y: number,
-  z: number,
-  nx: number,
-  ny: number,
+  _z: number,
+  _nx: number,
+  _ny: number,
   nz: number,
 ): number {
   const chest = smoothstep(0.1, 0.18, y) * (1 - smoothstep(0.28, 0.4, y))

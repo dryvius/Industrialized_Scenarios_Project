@@ -26,6 +26,13 @@ export function formatVitalsClock(date: Date = new Date()): string {
   return `${hh}:${mm}:${ss}`
 }
 
+export function formatVitalsDate(date: Date = new Date()): string {
+  const yyyy = date.getFullYear()
+  const mm = String(date.getMonth() + 1).padStart(2, '0')
+  const dd = String(date.getDate()).padStart(2, '0')
+  return `${yyyy}年${mm}月${dd}日`
+}
+
 export function vitalsLevelLabel(level: VitalsLevel): string {
   return VITALS_LEVEL_LABELS[level]
 }

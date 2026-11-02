@@ -8,7 +8,7 @@ const props = defineProps<{
   physicsDebugVisible: boolean
   selectedCanAnimate: boolean
   selectedAnimating: boolean
-  hologramPreviewVisible: boolean
+  virusMonitorVisible: boolean
   healthOpsMode: boolean
 }>()
 
@@ -17,7 +17,7 @@ const emit = defineEmits<{
   toggleDemo: []
   togglePhysicsDebug: []
   toggleSelectedAnimation: []
-  toggleHologramPreview: []
+  toggleVirusMonitor: []
   toggleHealthOps: []
 }>()
 
@@ -41,8 +41,8 @@ const physicsDebugLabel = computed((): string =>
   props.physicsDebugVisible ? '隐藏碰撞体线框' : '显示碰撞体线框',
 )
 
-const hologramPreviewLabel = computed((): string =>
-  props.hologramPreviewVisible ? '关闭全息人体面板' : '打开全息人体演示',
+const virusMonitorLabel = computed((): string =>
+  props.virusMonitorVisible ? '关闭病毒监控面板' : '打开病毒监控演示',
 )
 
 const healthOpsLabel = computed((): string =>
@@ -69,8 +69,8 @@ function handleToggleSelectedAnimation(): void {
   emit('toggleSelectedAnimation')
 }
 
-function handleToggleHologramPreview(): void {
-  emit('toggleHologramPreview')
+function handleToggleVirusMonitor(): void {
+  emit('toggleVirusMonitor')
 }
 
 function handleToggleHealthOps(): void {
@@ -118,9 +118,9 @@ function handleToggleHealthOps(): void {
       <button
         type="button"
         class="action-btn action-btn--secondary"
-        @click="handleToggleHologramPreview"
+        @click="handleToggleVirusMonitor"
       >
-        {{ hologramPreviewLabel }}
+        {{ virusMonitorLabel }}
       </button>
       <button
         type="button"

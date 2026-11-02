@@ -35,30 +35,6 @@ function addPinBracket(
   parent.add(lug)
 }
 
-/** 在两点之间放一根连杆，长度沿局部 Z */
-function addSpanBox(
-  parent: THREE.Object3D,
-  fromX: number,
-  fromY: number,
-  fromZ: number,
-  toX: number,
-  toY: number,
-  toZ: number,
-  width: number,
-  height: number,
-  material: THREE.Material,
-  castShadow: boolean,
-): void {
-  const direction = new THREE.Vector3(toX - fromX, toY - fromY, toZ - fromZ)
-  const length = Math.max(direction.length(), 0.04)
-  direction.multiplyScalar(1 / length)
-  const mesh = new THREE.Mesh(new THREE.BoxGeometry(width, height, length), material)
-  mesh.position.set((fromX + toX) * 0.5, (fromY + toY) * 0.5, (fromZ + toZ) * 0.5)
-  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), direction)
-  mesh.castShadow = castShadow
-  parent.add(mesh)
-}
-
 function pitchPoint(y: number, z: number): readonly [number, number] {
   const cosine = Math.cos(BUCKET_SHELL_PITCH)
   const sine = Math.sin(BUCKET_SHELL_PITCH)
